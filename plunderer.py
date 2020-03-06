@@ -68,20 +68,20 @@ def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
 
 def identifyRoute53Hijack(domain):
 	resolver = dns.resolver.Resolver()
-	vulnDomains = []
+	vulnDomain = None
 	awsNSList = []
 
 	try:
 		answr = resolver.query(domain, "NS")
 	except DNSException as error:
 #		print("[!] DNS problems occurred - good luck with that!")
-		return vulnDomains
+		return vulnDomain
 
 	awsTargetNS = []
 	for x in answr:
 		if "awsdns" not in str(x):
 #			print("[!] AWS doesn't manage this domain")
-			return vulnDomains
+			return vulnDomain
 		else:
 			awsTargetNS.append(str(x))
 			try:
@@ -114,17 +114,17 @@ def identifyRoute53Hijack(domain):
 				print("[+] Details:")
 				print("	Domain: " + domain)
 				print("	Nameservers: \n		" + ','.join(awsTargetNS))
-				vulnDomains.append(domain)
+				vulnDomain = domain
 			elif response.rcode() == dns.rcode.SERVFAIL:
 				print("[+] Potential opportunity for theft")
 				print("[+] Details:")
 				print("	Domain: " + domain)
 				print("	Nameservers: \n		" + ','.join(awsTargetNS))
-				vulnDomains.append(domain)
+				vulnDomain = domain
 #			else:
 #				print("[!] Domain doesn't look vulnerable")
 
-		return vulnDomains
+		return vulnDomain
 
 
 def hijackRoute53(domain, ns):
@@ -169,6 +169,7 @@ def hijackRoute53(domain, ns):
 
 
 if args.mode.lower() == "i":
+	tmpIdentVulnDomains = []
 	if targlist is not None:
 		try:
 			with open(targlist) as f:
@@ -180,10 +181,24 @@ if args.mode.lower() == "i":
 			sys.exit(0)
 
 		for x in targs:
-			identifyRoute53Hijack(x)
+			tmpIdent = identifyRoute53Hijack(x)
+			if tmpIdent is not None:
+				tmpIdentVulnDomains.append(tmpIdent)
 	else:
 		print("[+] Checking if " + targ + " is vulnerable")
-		identifyRoute53Hijack(targ)
+		tmpIdent = str(identifyRoute53Hijack(targ))
+		if tmpIdent is not None:
+			tmpIdentVulnDomains.append(tmpIdent)
+
+	identVulnDomains = list(filter(None, tmpIdentVulnDomains))
+
+	if not identVulnDomains:
+		print("[!] No vulnerable domains found")
+	elif args.outfile is not None:
+		print("[+] Writing results to " + args.outfile)
+		with open(args.outfile, mode='wt', encoding='utf-8') as out:
+			out.write('\n'.join(identVulnDomains))
+
 elif args.mode.lower() == "h":
 	if args.awsnameserver is not None:
 		if ',' in args.awsnameserver:
