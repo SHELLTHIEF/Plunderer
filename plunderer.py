@@ -32,7 +32,7 @@ print(banner)
 
 parser = argparse.ArgumentParser(description='Identify potentially hijackable Route53 hosted zones - then hijack them!', prog='Plunderer')
 parser.add_argument('-d', '--domain', help='Target domain')
-parser.add_argument('-m', '--mode', default='i', help='Would you like to heck if subdomains are vulnerable to Route53 hijacking or hijack an identified vulnerable domain? (Valid values: [i]dentify / [h]ijack - default is i)')
+parser.add_argument('-m', '--mode', default='i', help='Would you like to check if subdomains are vulnerable to Route53 hijacking or hijack an identified vulnerable domain? (Valid values: [i]dentify / [h]ijack - default is i)')
 parser.add_argument('-ns', '--awsnameserver', help='Only for mode: hijack - provide the vulnerable domains AWS nameserver(s), i.e. ns-170.awsdns-21.com or a comma seperated list, like the output of the identification function')
 parser.add_argument('-iL', '--inputlist', help='Read domains from a list file')
 parser.add_argument('-o', '--outfile', help='Write out list of vulnerable domains to a file')
