@@ -17,12 +17,13 @@ Usage is pretty simple but changes based on mode. For example, to identify wheth
 For a full list of options see below:
 
 ```
+  -h, --help            show this help message and exit
   -d DOMAIN, --domain DOMAIN
                         Target domain
-  -m MODE, --mode MODE  Would you like to heck if subdomains are vulnerable to
-                        Route53 hijacking or hijack an identified vulnerable
-                        domain? (Valid values: [i]dentify / [h]ijack - default
-                        is i)
+  -m MODE, --mode MODE  Would you like to check if subdomains are vulnerable
+                        to Route53 hijacking or hijack an identified
+                        vulnerable domain? (Valid values: [i]dentify /
+                        [h]ijack - default is i)
   -ns AWSNAMESERVER, --awsnameserver AWSNAMESERVER
                         Only for mode: hijack - provide the vulnerable domains
                         AWS nameserver(s), i.e. ns-170.awsdns-21.com or a
